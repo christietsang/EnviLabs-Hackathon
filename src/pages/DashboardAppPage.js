@@ -21,7 +21,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard | Envi Labs </title>
       </Helmet>
 
       <Container maxWidth="xl">
