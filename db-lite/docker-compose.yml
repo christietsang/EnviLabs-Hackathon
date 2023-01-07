@@ -1,0 +1,12 @@
+version: "3.9"
+   
+services:
+  psql_db:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '15432:5432'
+    volumes: 
+      - ./init.sql:/docker-entrypoint-initdb.d/create_tables.sql
