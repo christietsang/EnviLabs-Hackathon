@@ -85,40 +85,23 @@ def get_location_coordinates(location):
 
 @app.route('/api/truck_path_coordinates/<int:truck_id>', methods=['GET'])
 def get_truck_path_coordinates(truck_id):
-    
-    if truck_id == "0":
-        query = mydb.execute_sql('select gpseasting, gpsnorthing from trip_path_locations;')
-                
+    print(truck_id)
+    if truck_id == 0:
+        query = mydb.execute_sql('SELECT gpseasting, gpsnorthing FROM trip_path_locations;')
     else:
-        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing FROM trip_path_locations WHERE truck_id={truck_id};')
-    
+        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing, trip_id FROM trip_path_locations WHERE truck_id={truck_id};')
+    trip_count = 0
     coordinates = []
     for q in query:
+        print("test")
         easting = q[0]
         northing = q[1]
+        if truck_id != 0: trip_count = max(trip_count, q[2])
         if 100_000 < easting < 999_999 and 0 < northing < 10_000_000:
             this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
             coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
-    return { "coordinates": coordinates }
+    return { "coordinates": coordinates, "trip_count": trip_count}
 
-
-@app.route('/api/truck_trips/<int:truck_id>', methods=['GET'])
-def get_truck_trips(truck_id):
-    
-    if truck_id == "0":
-        query = mydb.execute_sql('select gpseasting, gpsnorthing from trip_path_locations;')
-                
-    else:
-        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing FROM trip_path_locations WHERE truck_id={truck_id};')
-    
-    coordinates = []
-    for q in query:
-        easting = q[0]
-        northing = q[1]
-        if 100_000 < easting < 999_999 and 0 < northing < 10_000_000:
-            this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
-            coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
-    return { "coordinates": coordinates }
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count(truck_id):
