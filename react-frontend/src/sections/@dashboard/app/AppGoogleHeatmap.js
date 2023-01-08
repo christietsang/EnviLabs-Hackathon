@@ -78,6 +78,14 @@ export default function AppGoogleHeatmap() {
         })
     }
 
+    const createTripIdDropDown = () => {
+        const numsList = [...Array(2).keys()]
+        return numsList.map((item) => {
+            if (item === 0) return <MenuItem value={item}>All</MenuItem>
+            return <MenuItem value={item}>{item}</MenuItem>
+        })
+    }
+
     const handleChange = (event) => {
         const newTruckId = event.target.value
         setTruckID(newTruckId)
@@ -109,6 +117,20 @@ export default function AppGoogleHeatmap() {
                             {createDropDown()}
                         </Select>
                     </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-label-2">Trips</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label-2"
+                            label="Truck Activity"
+                            id="demo-simple-select"
+                            value={truckID}
+                            defaultValue={0}
+                            onChange={handleChange}
+                            MenuProps={MenuProps}
+                        >
+                            {createTripIdDropDown()}
+                        </Select>
+                    </FormControl>                    
                 </div>
 
                 {/* <button onClick={() => console.log(heatMapData)}>Test</button> */}
