@@ -1,10 +1,12 @@
+import {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import ReactApexChart from 'react-apexcharts';
-// @mui
+import axios from 'axios';
+
 import { styled } from '@mui/material/styles';
-import { Card, CardHeader } from '@mui/material';
+import { Card, CardHeader, TextField, Button, Grid } from '@mui/material';
 // components
-import { useChart } from '../../../components/chart';
+import AppWidgetSummary from './AppWidgetSummary';
+
 
 // ----------------------------------------------------------------------
 
@@ -40,28 +42,60 @@ AppCurrentSubject.propTypes = {
   chartLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
+const fuelPredictionEndpoint = 'http://127.0.0.1:5000/api/predict_fuel_rate';
+
 export default function AppCurrentSubject({ title, subheader, chartData, chartColors, chartLabels, ...other }) {
-  const chartOptions = useChart({
-    stroke: { width: 2 },
-    fill: { opacity: 0.48 },
-    legend: { floating: true, horizontalAlign: 'center' },
-    xaxis: {
-      categories: chartLabels,
-      labels: {
-        style: {
-          colors: chartColors,
-        },
-      },
-    },
-  });
+  const [tructId, setTruckId] = useState('');
+  const [truckTypeId, setTruckTypeId] = useState('');
+  const [payload, setPayload] = useState('');
+  const [status, setStatus] = useState('');
+  const [preductedFuelRate, setPredictedFuelRate] = useState();
+
+  const handleButtonClick = () => {
+    setTruckId('');
+    setTruckTypeId('');
+    setPayload('');
+    setStatus('');
+    setPredictedFuelRate('');
+    const data = {
+      truck_id: tructId,
+      truck_type_id: truckTypeId,
+      payload,
+      status
+    }
+
+    axios.post(fuelPredictionEndpoint, data)
+    .then((response) => {
+      const preductedFuelRate = response.data.predicted_fuel_rate;
+      setPredictedFuelRate(preductedFuelRate);
+    }, (error) => {
+      console.log(error);
+    });
+  }
 
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-
-      <StyledChartWrapper dir="ltr">
-        <ReactApexChart type="radar" series={chartData} options={chartOptions} height={340} />
-      </StyledChartWrapper>
+      <Grid container spacing={3} padding={2}>
+        <Grid item xs={12} md={6}>
+        <TextField id="outlined-basic" label="truck-id" variant="outlined" name="truck-id" value={tructId} onChange={(e) => setTruckId(e.target.value)}/>
+        </Grid>
+        <Grid item xs={12} md={6}>
+        <TextField id="outlined-basic" label="truck-type-id" variant="outlined" name="truck-type-id" value={truckTypeId} onChange={(e) => setTruckTypeId(e.target.value)} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+        <TextField id="outlined-basic" label="payload" variant="outlined" name="payload" value={payload} onChange={(e) => setPayload(e.target.value)}/>
+        </Grid>
+        <Grid item xs={12} md={6}>
+        <TextField id="outlined-basic" label="status" variant="outlined" name="status" value={status} onChange={(e) => setStatus(e.target.value)} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+        <Button variant="contained" onClick={handleButtonClick}>Predict</Button>
+        </Grid>
+        <Grid item xs={12} md={6}>
+        <AppWidgetSummary title="Predicted Fuel Rate" total={preductedFuelRate} icon={'mdi:dump-truck'} />
+        </Grid>
+      </Grid>
     </Card>
   );
 }
