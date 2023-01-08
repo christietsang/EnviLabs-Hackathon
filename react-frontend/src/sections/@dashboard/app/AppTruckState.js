@@ -60,9 +60,7 @@ export default function AppTruckState({ title }) {
   }
 
   React.useEffect(() => {
-    console.log(baseURL)
     axios.get(baseURL).then((response => {
-      console.log(response.data)
       setPost(response.data);
       setIsLoading(false);
     }))
@@ -88,7 +86,7 @@ export default function AppTruckState({ title }) {
       <CardHeader title={title} />
       <StyledChartWrapper dir="ltr">
         <div>
-        <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+        <FormControl sx={{ ml: 2, mt: -3, minWidth: 200 }} size="small">
           <InputLabel id="demo-simple-select-label">Truck ID</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -103,14 +101,16 @@ export default function AppTruckState({ title }) {
           </Select>
         </FormControl>
         </div>
-        { !isLoading && <svg viewBox="-270 0 800 400">
+        { !isLoading && <svg viewBox="-180 20 700 700">
           <VictoryPie
             data={APIData}
             colorScale="qualitative"
             innerRadius={60}
-            labelRadius={180}
+            labelRadius={160}
             standalone={false}
             sortOrder="ascending"
+            endAngle={450}
+            startAngle={90}
             labelPlacement={({ index }) => index
               ? "vertical"
               : "vertical"
@@ -120,13 +120,15 @@ export default function AppTruckState({ title }) {
             data={APIData}
             colorScale="qualitative"
             innerRadius={60}
-            labelRadius={100}
+            labelRadius={120}
             standalone={false}
             labels={({ datum }) => `${datum.y}%`}
             sortOrder="ascending"
+            endAngle={450}
+            startAngle={90}
           />
         </svg> }
-          {isLoading && <CircularProgress />}
+          {isLoading && <CircularProgress sx={{ ml: 50, mt: 15}} />}
       </StyledChartWrapper>
     </Card>
   );

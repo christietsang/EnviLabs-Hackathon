@@ -15,7 +15,7 @@ export default function AppWebsiteVisits({ title, subheader }) {
     <Card>
       <CardHeader title={title} subheader={subheader} />
 
-      <Box sx={{ p: 3, pb: 1 }} dir="ltr">
+      <Box sx={{ p: 2, pb: 1 }} dir="ltr">
         <AppFuelRateByType title="Fuel Rate By Type" />
       </Box>
     </Card>

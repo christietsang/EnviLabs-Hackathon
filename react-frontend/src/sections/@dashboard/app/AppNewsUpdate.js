@@ -43,16 +43,15 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
 
 NewsItem.propTypes = {
   news: PropTypes.shape({
-    description: PropTypes.string,
     image: PropTypes.string,
-    postedAt: PropTypes.instanceOf(Date),
+    date: PropTypes.string,
     title: PropTypes.string,
   }),
 };
 
 function NewsItem({ news }) {
-  const { image, title, description, postedAt } = news;
-
+  const { image, title, date } = news;
+  console.log(date)
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Box component="img" alt={title} src={image} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
@@ -62,13 +61,10 @@ function NewsItem({ news }) {
           {title}
         </Link>
 
-        <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-          {description}
-        </Typography>
       </Box>
 
       <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-        {fToNow(postedAt)}
+        {date}
       </Typography>
     </Stack>
   );
