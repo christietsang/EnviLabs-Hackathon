@@ -95,9 +95,13 @@ export default function AppTruckState({ title }) {
             standalone={false}
             origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
+            labelPosition={({ index }) => index
+            ? "centroid"
+            : "startAngle"
+            }
             labelPlacement={({ index }) => index
-              ? "vertical"
-              : "vertical"
+            ? "parallel"
+            : "vertical"
             }
           />
           <VictoryPie
