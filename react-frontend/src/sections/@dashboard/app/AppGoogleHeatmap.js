@@ -13,6 +13,7 @@ const tripCoordinatesURL = "http://127.0.0.1:5000/api/trip_coordinates"
 
 export default function AppGoogleHeatmap() {
     const [heatMapData, setHeatMapData] = React.useState()
+    const [coordinates, setCoordinates] = useState([])
     const [, forceUpdate] = React.useState()
     const [truckID, setTruckID] = useState(0)
 
@@ -28,66 +29,36 @@ export default function AppGoogleHeatmap() {
         // use map and maps objects
     };
 
+    React.useEffect(() => {
+        setHeatMapData({
+            positions: coordinates,
+            options: {
+                radius: 20,
+                opacity: 0.6,
+            }
+        })
+    }, [coordinates]);
+
+
     const getLocationCoordinates = React.useCallback((location) => {
         axios.get(`${locationCoordinatesURL}/${location}`).then((response => {
-            setHeatMapData({
-                positions: response.data.coordinates,
-                options: {
-                    radius: 20,
-                    opacity: 0.6,
-                }
-            })
+            setCoordinates([...response.data.coordinates])
         }))
     })
 
     const getTruckPathCoordinates = React.useCallback((truckId) => {
         axios.get(`${truckPathCoordinatesURL}/${truckId}`).then((response => {
-            setHeatMapData({
-                positions: response.data.coordinates,
-                options: {
-                    radius: 20,
-                    opacity: 0.6,
-                }
-            })
+            setCoordinates([...response.data.coordinates])
         }))
     })
 
     const getTripCoordinates = React.useCallback((tripId) => {
         axios.get(`${tripCoordinatesURL}/${tripId}`).then((response => {
-            setHeatMapData({
-                positions: response.data.coordinates,
-                options: {
-                    radius: 20,
-                    opacity: 0.6,
-                }
-            })
+            setCoordinates([...response.data.coordinates])
         }))
     })
 
 
-    // React.useEffect(() => {
-    //     axios.get(`${baseURL}/shovel`).then((response => {
-    //         console.log(response.data)
-    //         setHeatMapData({
-    //             positions: response.data.coordinates,
-    //             options: {
-    //                 radius: 20,
-    //                 opacity: 0.6,
-    //             }
-    //         })
-    //     }))
-    // }, []);
-
-
-
-
-    // const heatMapData = {
-    //     positions: coordinates,
-    //     options: {
-    //         radius: 20,
-    //         opacity: 0.6,
-    //     }
-    // }
 
     const createDropDown = () => {
         const numsList = [...Array(69).keys()]
