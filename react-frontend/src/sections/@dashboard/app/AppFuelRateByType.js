@@ -23,7 +23,7 @@ export default function AppFuelRateByType() {
       >
         <VictoryGroup horizontal
           offset={13}
-          style={{ data: { width: 9 } }}
+          style={{ data: { width: 12 } }}
           colorScale={"qualitative"}
         >
           <VictoryBar
