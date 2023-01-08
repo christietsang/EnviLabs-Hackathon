@@ -11,6 +11,7 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
+  AppGoogleHeatmap
 } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
@@ -134,6 +135,10 @@ export default function DashboardAppPage() {
                 postedAt: faker.date.recent(),
               }))}
             />
+          </Grid>
+          <Grid item xs={12} md={6} lg={8}>
+            <AppGoogleHeatmap />
+            <button>Help</button>
           </Grid>
         </Grid>
       </Container>
