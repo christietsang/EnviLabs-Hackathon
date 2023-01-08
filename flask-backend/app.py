@@ -84,15 +84,12 @@ def get_location_coordinates(location):
     #     start_coordinates.append({"lat": coordinates[0], "lon": coordinates[1]})
     coordinates = []
     for q in query:
-        # if q[0] > 999999 or q[0] < 100000:
-        #     print(q[0], q[1])
-        if q[1] > 10_000_000 or q[1] < 0:
-            print(q[0], q[1])
-        this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
-        # print(this_coordinates)
-        # coordinates = coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
-    # print(coordinates)
-    return "test"
+        easting = q[0]
+        northing = q[1]
+        if 100_000 < easting < 999_999 and 0 < northing < 10_000_000:
+            this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
+            coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
+    return { "coordinates": coordinates }
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count(truck_id):
