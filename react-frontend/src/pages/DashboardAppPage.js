@@ -32,19 +32,19 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Trucks" total={70} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Total Trucks" total={70} icon={'mdi:dump-truck'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Unique Paths" total={94} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Unique Paths" total={94} color="info" icon={'material-symbols:conversion-path'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Shovels" total={9} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary title="Total Shovels" total={9} color="warning" icon={'material-symbols:front-loader-rounded'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Dumps" total={36} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="Total Dumps" total={36} color="error" icon={'mdi:mountain'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
