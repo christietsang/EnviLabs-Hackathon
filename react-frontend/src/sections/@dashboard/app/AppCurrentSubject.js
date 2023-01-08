@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import { styled } from '@mui/material/styles';
-import { Card, CardHeader, TextField, Button, Grid } from '@mui/material';
+import { Card, CardHeader, TextField, Button, Grid, MenuItem, Select, InputLabel } from '@mui/material';
 // components
 import AppWidgetSummary from './AppWidgetSummary';
 
@@ -48,7 +48,7 @@ export default function AppCurrentSubject({ title, subheader, chartData, chartCo
   const [tructId, setTruckId] = useState('');
   const [truckTypeId, setTruckTypeId] = useState('');
   const [payload, setPayload] = useState('');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('Dumping');
   const [preductedFuelRate, setPredictedFuelRate] = useState();
 
   const handleButtonClick = () => {
@@ -68,6 +68,23 @@ export default function AppCurrentSubject({ title, subheader, chartData, chartCo
     });
   }
 
+  const createDropDown = () => {
+    const numsList = ["Dumping", "Hauling", "Empty", "NON_PRODUCTIVE", "Queue At LU", "Queuing at Dump", "Spot at LU", "Truck Loading"]
+    return numsList.map((item) => {
+      return <MenuItem value={item} key={item}>{item}</MenuItem>
+    })
+  }
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250
+      }
+    }
+  };
+
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -82,7 +99,20 @@ export default function AppCurrentSubject({ title, subheader, chartData, chartCo
         <TextField id="outlined-basic" label="payload" variant="outlined" name="payload" value={payload} onChange={(e) => setPayload(e.target.value)}/>
         </Grid>
         <Grid item xs={12} md={6}>
-        <TextField id="outlined-basic" label="status" variant="outlined" name="status" value={status} onChange={(e) => setStatus(e.target.value)} />
+        {/* <InputLabel id="demo-simple-select-label">Status</InputLabel> */}
+        <Select
+
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={status}
+            label="Status"
+            defaultValue={status}
+            onChange={(e) => setStatus(e.target.value)}
+            MenuProps={MenuProps}
+          >
+            {createDropDown()}
+          </Select>
+        {/* <TextField id="outlined-basic" label="status" variant="outlined" name="status" value={status} onChange={(e) => setStatus(e.target.value)} /> */}
         </Grid>
         <Grid item xs={12} md={6}>
         <Button variant="contained" onClick={handleButtonClick}>Predict</Button>
