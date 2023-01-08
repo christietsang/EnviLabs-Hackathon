@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import GoogleMapReact from 'google-map-react';
 import axios from 'axios'
+import { Box, Button, Card, CardHeader, FormControl, Select, InputLabel, MenuItem } from '@mui/material';
 
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
-const baseURL = "http://127.0.0.1:5000/api/location_coordinates"
+const locationCoordinatesURL = "http://127.0.0.1:5000/api/location_coordinates"
+const truckPathCoordinatesURL = "http://127.0.0.1:5000/api/truck_path_coordinates"
+const tripCoordinatesURL = "http://127.0.0.1:5000/api/trip_coordinates"
 
 
 export default function AppGoogleHeatmap() {
     const [heatMapData, setHeatMapData] = React.useState()
+    const [, forceUpdate] = React.useState()
+    const [truckID, setTruckID] = useState(0)
+
     const defaultProps = {
         center: {
             lat: 0.5158022987615369,
@@ -22,9 +28,8 @@ export default function AppGoogleHeatmap() {
         // use map and maps objects
     };
 
-    const getLocationCoordinates = (location) => {
-        axios.get(`${baseURL}/${location}`).then((response => {
-            console.log(response.data)
+    const getLocationCoordinates = React.useCallback((location) => {
+        axios.get(`${locationCoordinatesURL}/${location}`).then((response => {
             setHeatMapData({
                 positions: response.data.coordinates,
                 options: {
@@ -32,30 +37,113 @@ export default function AppGoogleHeatmap() {
                     opacity: 0.6,
                 }
             })
-
         }))
+    })
+
+    const getTruckPathCoordinates = React.useCallback((truckId) => {
+        axios.get(`${truckPathCoordinatesURL}/${truckId}`).then((response => {
+            setHeatMapData({
+                positions: response.data.coordinates,
+                options: {
+                    radius: 20,
+                    opacity: 0.6,
+                }
+            })
+        }))
+    })
+
+    const getTripCoordinates = React.useCallback((tripId) => {
+        axios.get(`${tripCoordinatesURL}/${tripId}`).then((response => {
+            setHeatMapData({
+                positions: response.data.coordinates,
+                options: {
+                    radius: 20,
+                    opacity: 0.6,
+                }
+            })
+        }))
+    })
+
+
+    // React.useEffect(() => {
+    //     axios.get(`${baseURL}/shovel`).then((response => {
+    //         console.log(response.data)
+    //         setHeatMapData({
+    //             positions: response.data.coordinates,
+    //             options: {
+    //                 radius: 20,
+    //                 opacity: 0.6,
+    //             }
+    //         })
+    //     }))
+    // }, []);
+
+
+
+
+    // const heatMapData = {
+    //     positions: coordinates,
+    //     options: {
+    //         radius: 20,
+    //         opacity: 0.6,
+    //     }
+    // }
+
+    const createDropDown = () => {
+        const numsList = [...Array(69).keys()]
+        return numsList.map((item) => {
+            if (item === 0) return <MenuItem value={item}>All</MenuItem>
+            return <MenuItem value={item}>{item}</MenuItem>
+        })
+    }
+
+    const handleChange = (event) => {
+        const newTruckId = event.target.value
+        setTruckID(newTruckId)
+        getTruckPathCoordinates(newTruckId)
     }
 
 
     return (
         // Important! Always set the container height explicitly
-        <div style={{ height: '100vh', width: '100%' }}>
-            <button onClick={() => getLocationCoordinates("shovel")}>Loading Locations</button>
-            <button onClick={() => getLocationCoordinates("dump")}>Dumping Locations</button>
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyDtiniFzSPG3U0MIc0UgeSNgVPIFLa3If4" }}
-                defaultCenter={defaultProps.center}
-                defaultZoom={defaultProps.zoom}
-                heatmapLibrary
-                heatmap={heatMapData}
-            // onClick={this.onMapClick.bind(this)}
-            >
-                <AnyReactComponent
+        <Card>
+            <CardHeader title={"Activity Heat Map"} />
+            <div style={{ height: '100vh', width: '100%', }}>
+                <div style={{ display: "flex", justifyContent: "left", alignItems: "left" }}>
+                    <Button variant="outlined" onClick={() => getLocationCoordinates("shovel")}>Loading Locations</Button>
+                    <Button variant="outlined" onClick={() => getLocationCoordinates("dump")}>Dumping Locations</Button>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-label">Truck Paths</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            label="Truck Activity"
+                            id="demo-simple-select"
+                            value={truckID}
+                            defaultValue={0}
+                            onChange={handleChange}
+                        >
+                            {createDropDown()}
+                        </Select>
+                    </FormControl>
+                </div>
+
+                {/* <button onClick={() => console.log(heatMapData)}>Test</button> */}
+                <GoogleMapReact
+
+                    bootstrapURLKeys={{ key: "AIzaSyDtiniFzSPG3U0MIc0UgeSNgVPIFLa3If4" }}
+                    defaultCenter={defaultProps.center}
+                    defaultZoom={defaultProps.zoom}
+                    heatmapLibrary
+                    heatmap={heatMapData}
+                // onClick={this.onMapClick.bind(this)}
+                >
+                    {/* <AnyReactComponent
                     lat={59.955413}
                     lng={30.337844}
                     text="My Marker"
-                />
-            </GoogleMapReact>
-        </div>
+                /> */}
+                </GoogleMapReact>
+            </div>
+        </Card>
     );
 }
