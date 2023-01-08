@@ -82,7 +82,7 @@ export default function AppTruckState({ title }) {
   if (!post) return null;
 
   function convertJsonObject(object) {
-    return object.data.map(item => ({ x: item.status, y: item.value }));
+    return object.data.map(item => ({ x: item.status, y: Number(item.value.toFixed(1))}));
   }
 
   const APIData = convertJsonObject(post)
@@ -100,9 +100,6 @@ export default function AppTruckState({ title }) {
             standalone={false}
             origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
-            animate={{
-              duration: 2000
-            }}
             labelPlacement={({ index }) => index
             ? "vertical"
             : "vertical"
@@ -117,10 +114,6 @@ export default function AppTruckState({ title }) {
             labels={({ datum }) => `${datum.y}%`}
             origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
-            animate={{
-              duration: 2000
-            }
-          }
           />
         </svg>
 
