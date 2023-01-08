@@ -48,15 +48,15 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits
-              title="Fuel Rate By Truck Type"
-              subheader="Hauling and Overall"
+            <AppTruckState
+              title="Truck State by %"
             />
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppTruckState
-              title="Truck State by %"
+            <AppWebsiteVisits
+              title="Fuel Rate By Truck Type"
+              subheader="Hauling and Overall"
             />
           </Grid>
 

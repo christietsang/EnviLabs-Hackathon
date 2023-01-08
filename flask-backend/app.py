@@ -105,12 +105,12 @@ def get_fuel_rate_by_truck_type():
 
     hauling_query = Operations\
         .select(Operations.truck_type_id, fn.AVG(Operations.fuel_rate).alias('avg_fuel_rate'))\
-        .where(Operations.status == "Hauling", Operations.truck_type_id != 2, Operations.truck_type_id != 4)\
+        .where(Operations.status == "Hauling", ~(Operations.fuel_rate >> None))\
         .group_by(Operations.truck_type_id)
     
     non_hauling_query = Operations\
         .select(Operations.truck_type_id, fn.AVG(Operations.fuel_rate).alias('avg_fuel_rate'))\
-        .where(Operations.status == "Hauling", Operations.truck_type_id != 2, Operations.truck_type_id != 4)\
+        .where(Operations.status != "Hauling", ~(Operations.fuel_rate >> None))\
         .group_by(Operations.truck_type_id)
  
     return {"data": {

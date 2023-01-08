@@ -32,6 +32,16 @@ const StyledChartWrapper = styled('div')(({ theme }) => ({
 AppTruckState.propTypes = {
   title: PropTypes.string,
 };
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
 
 
 export default function AppTruckState({ title }) {
@@ -77,6 +87,7 @@ export default function AppTruckState({ title }) {
     <Card>
       <CardHeader title={title} />
       <StyledChartWrapper dir="ltr">
+        <div>
         <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
           <InputLabel id="demo-simple-select-label">Truck ID</InputLabel>
           <Select
@@ -86,18 +97,19 @@ export default function AppTruckState({ title }) {
             label="Age"
             defaultValue={0}
             onChange={handleChange}
+            MenuProps={MenuProps}
           >
             {createDropDown()}
           </Select>
         </FormControl>
-        { !isLoading && <svg viewBox="-50 -40 450 450">
+        </div>
+        { !isLoading && <svg viewBox="-270 0 800 400">
           <VictoryPie
             data={APIData}
             colorScale="qualitative"
             innerRadius={60}
             labelRadius={180}
             standalone={false}
-            origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
             labelPlacement={({ index }) => index
               ? "vertical"
@@ -111,7 +123,6 @@ export default function AppTruckState({ title }) {
             labelRadius={100}
             standalone={false}
             labels={({ datum }) => `${datum.y}%`}
-            origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
           />
         </svg> }
