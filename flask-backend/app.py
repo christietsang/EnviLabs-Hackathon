@@ -42,21 +42,22 @@ class Operations(Model):
         database = mydb
 
 class Trips(Model):
-    trip_id = IntegerField()
     shovel_id = IntegerField()
     dump_id = IntegerField()
     truck_id = IntegerField()
     truck_type_id = IntegerField()
-    avg_fuel = DoubleField()
-    payload = DoubleField()
+    avg_fuel = FloatField()
+    payload = FloatField()
     start_time = DateTimeField()
     end_time = DateTimeField()
-    start_gpsnorthing = DoubleField()
-    end_gpsnorthing = DoubleField()
-    start_gpseasting = DoubleField()
-    end_gpseasting = DoubleField()
-    start_gpselevation = DoubleField()
-    end_gpselevation = DoubleField()
+    start_gpsnorthing = FloatField()
+    end_gpsnorthing = FloatField()
+    start_gpseasting = FloatField()
+    end_gpseasting = FloatField()
+    start_gpselevation = FloatField()
+    end_gpselevation = FloatField()
+    trip_id = IntegerField(primary_key=True)
+    
 
     class Meta:
         database = mydb
@@ -64,15 +65,33 @@ class Trips(Model):
 
 mydb.connect()
 
-@app.route('/api/all_start_coordinates', methods=['GET'])
-def get_all_start_coordinates():
-    query = Trips\
-            .select(Trips.start_gpseasting) 
+@app.route('/api/location_coordinates/<string:location>', methods=['GET'])
+def get_location_coordinates(location):
+    
+    if location == "shovel":
+        query = mydb.execute_sql('select start_gpseasting, start_gpsnorthing from trips;')
+                
+    else:
+        query = mydb.execute_sql('select end_gpseasting, end_gpsnorthing from trips;')
+    # [
+    #         { lat: 55.5, lng: 34.56 },
+    #         { lat: 34.7, lng: 28.4 },
+    # ]     
+
     # start_coordinates = []
     # for trip in Trips:
     #     coordinates = utm.to_latlon(trip["easting"], trip["northing"], 1, "s")
     #     start_coordinates.append({"lat": coordinates[0], "lon": coordinates[1]})
-    print(query)
+    coordinates = []
+    for q in query:
+        # if q[0] > 999999 or q[0] < 100000:
+        #     print(q[0], q[1])
+        if q[1] > 10_000_000 or q[1] < 0:
+            print(q[0], q[1])
+        this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
+        # print(this_coordinates)
+        # coordinates = coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
+    # print(coordinates)
     return "test"
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])

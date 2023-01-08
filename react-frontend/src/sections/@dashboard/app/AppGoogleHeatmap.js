@@ -5,10 +5,11 @@ import axios from 'axios'
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
-const baseURL = "http://127.0.0.1:5000/api/all_start_coordinates"
+const baseURL = "http://127.0.0.1:5000/api/location_coordinates"
 
 
 export default function AppGoogleHeatmap() {
+    const { coordinates, setCoordinates } = React.useState([])
     const defaultProps = {
         center: {
             lat: 10.99835602,
@@ -22,8 +23,9 @@ export default function AppGoogleHeatmap() {
     };
 
     const handleClick = () => {
-        axios.get(baseURL).then((response => {
+        axios.get(baseURL.concat("/shovel")).then((response => {
             console.log(response.data)
+            // setCoordinates(response.data)
         }))
     }
 
@@ -36,10 +38,7 @@ export default function AppGoogleHeatmap() {
 
 
     const heatMapData = {
-        positions: [
-            { lat: 55.5, lng: 34.56 },
-            { lat: 34.7, lng: 28.4 },
-        ],
+        positions: coordinates,
         options: {
             radius: 20,
             opacity: 0.6,
