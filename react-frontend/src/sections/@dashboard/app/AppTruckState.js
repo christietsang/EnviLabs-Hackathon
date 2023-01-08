@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { Card, CardHeader } from '@mui/material';
 import { VictoryPie, VictoryTheme, VictoryLabel } from 'victory';
-
+import axios from 'axios'
+import React, { useState, useEffect } from 'react'
 
 // ----------------------------------------------------------------------
 
-const CHART_HEIGHT = 372;
-const LEGEND_HEIGHT = 72;
+const CHART_HEIGHT = 500;
+const LEGEND_HEIGHT = 90;
 
 const StyledChartWrapper = styled('div')(({ theme }) => ({
   height: CHART_HEIGHT,
@@ -31,6 +32,9 @@ const StyledChartWrapper = styled('div')(({ theme }) => ({
 AppTruckState.propTypes = {
   title: PropTypes.string,
 };
+
+const baseURL = "http://127.0.0.1:5000/api/truck_status_count/1"
+
 
 const jsonObject = {
   "data":[
@@ -66,31 +70,60 @@ const jsonObject = {
 
 export default function AppTruckState({ title }) {
 
-  function convertJsonObject(jsonObject) {
-    return jsonObject.data.map(item => ({ x: item.state, y: item.value }));
+  const [post, setPost] = useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response => {
+      console.log(response.data)
+      setPost(response.data);
+    }))
+  }, []);
+  
+  if (!post) return null;
+
+  function convertJsonObject(object) {
+    return object.data.map(item => ({ x: item.status, y: item.value }));
   }
 
-  const APIData = convertJsonObject(jsonObject)
+  const APIData = convertJsonObject(post)
 
   return (
     <Card>
-      {console.log(APIData)}
       <CardHeader title={title}/>
       <StyledChartWrapper dir="ltr">
-        <VictoryPie
-          data={APIData}
-          innerRadius={60}
-          labelRadius={130}
-          labels={({ datum }) => `${datum.y}%`}
-          theme={VictoryTheme.material}
-        />
-        <VictoryPie
-          data={APIData}
-          innerRadius={60}
-          labelRadius={120}
-          labels={({ datum }) => `${datum.y}%`}
-          theme={VictoryTheme.material}
-        />
+        <svg viewBox="-50 -40 450 450">
+          <VictoryPie
+            data={APIData}
+            colorScale="qualitative"
+            innerRadius={60}
+            labelRadius={180}
+            standalone={false}
+            origin={{ x: 150, y: 160 }}
+            sortOrder="ascending"
+            animate={{
+              duration: 2000
+            }}
+            labelPlacement={({ index }) => index
+            ? "vertical"
+            : "vertical"
+            }
+          />
+          <VictoryPie
+            data={APIData}
+            colorScale="qualitative"
+            innerRadius={60}
+            labelRadius={100}
+            standalone={false}
+            labels={({ datum }) => `${datum.y}%`}
+            origin={{ x: 150, y: 160 }}
+            sortOrder="ascending"
+            animate={{
+              duration: 2000
+            }
+          }
+          />
+        </svg>
+
       </StyledChartWrapper>
     </Card>
   );
