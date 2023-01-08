@@ -61,7 +61,6 @@ class Trips(Model):
 
 
 mydb.connect()
-# mydb.create_tables([Master])
 
 @app.route('/api/all_start_coordinates', methods=['GET'])
 def get_all_start_coordinates():
@@ -73,13 +72,28 @@ def get_all_start_coordinates():
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count(truck_id):
-    status_count = {}
-    for row in Operations.select().where(Operations.truck_id == truck_id):
-        status_count[row.status] = status_count.get(row.status, 0) + 1
+    query = Operations\
+            .select(Operations.status, fn.COUNT(Operations.status).alias('status_count'))\
+            .where(Operations.truck_id == truck_id)\
+            .group_by(Operations.status) 
+
+    STATUS_TRANSLATE = {
+        'Empty': "Empty",
+        'Queue At LU': "Queuing (LU)",
+        'Spot at LU': "Spotting",
+        'Truck Loading': "Loading",
+        'Hauling': "Hauling",
+        'NON_PRODUCTIVE': "Non-Productive",
+        'Queuing at Dump': "Queuing (Dump)",
+        'Dumping': "Dumping"
+    }
+
+    row_count = sum([q.status_count for q in query if q.status != 'Wenco General Production'])
 
     data = []
-    for key, value in status_count.items():
-        data.append({"status": key, "value": value})
+    for q in query:
+        if q.status != 'Wenco General Production':
+            data.append({"status": STATUS_TRANSLATE[q.status], "value": q.status_count / row_count * 100})
 
     return {"data": data}
 
