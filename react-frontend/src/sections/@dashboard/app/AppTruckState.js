@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import { VictoryPie } from 'victory';
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
-import { Card, CardHeader, FormControl, Select, InputLabel, MenuItem } from '@mui/material';
+import { Card, CardHeader, FormControl, Select, InputLabel, MenuItem, CircularProgress } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -38,12 +38,14 @@ export default function AppTruckState({ title }) {
 
 
   const [post, setPost] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [truckID, setTruckID] = useState(1)
 
   const baseURL = `http://127.0.0.1:5000/api/truck_status_count/${truckID}`
 
 
   const handleChange = (event) => {
+    setIsLoading(true);
     setTruckID(event.target.value);
   }
 
@@ -52,6 +54,7 @@ export default function AppTruckState({ title }) {
     axios.get(baseURL).then((response => {
       console.log(response.data)
       setPost(response.data);
+      setIsLoading(false);
     }))
   }, [truckID]);
 
@@ -66,7 +69,7 @@ export default function AppTruckState({ title }) {
   const createDropDown = () => {
     const numsList = [...Array(69).keys()]
     return numsList.map((item) => {
-      return <MenuItem value={item}>{item}</MenuItem>
+      return <MenuItem value={item} key={item}>{item}</MenuItem>
     })
   }
 
@@ -87,7 +90,7 @@ export default function AppTruckState({ title }) {
             {createDropDown()}
           </Select>
         </FormControl>
-        <svg viewBox="-50 -40 450 450">
+        { !isLoading && <svg viewBox="-50 -40 450 450">
           <VictoryPie
             data={APIData}
             colorScale="qualitative"
@@ -111,7 +114,8 @@ export default function AppTruckState({ title }) {
             origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
           />
-        </svg>
+        </svg> }
+          {isLoading && <CircularProgress />}
       </StyledChartWrapper>
     </Card>
   );
