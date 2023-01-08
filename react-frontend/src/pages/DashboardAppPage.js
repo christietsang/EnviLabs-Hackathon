@@ -138,7 +138,6 @@ export default function DashboardAppPage() {
           </Grid>
           <Grid item xs={12} md={6} lg={8}>
             <AppGoogleHeatmap />
-            <button>Help</button>
           </Grid>
         </Grid>
       </Container>

@@ -1,7 +1,12 @@
 import React from "react";
 import GoogleMapReact from 'google-map-react';
+import axios from 'axios'
+
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
+
+const baseURL = "http://127.0.0.1:5000/api/all_start_coordinates"
+
 
 export default function AppGoogleHeatmap() {
     const defaultProps = {
@@ -15,6 +20,19 @@ export default function AppGoogleHeatmap() {
     const handleApiLoaded = (map, maps) => {
         // use map and maps objects
     };
+
+    const handleClick = () => {
+        axios.get(baseURL).then((response => {
+            console.log(response.data)
+        }))
+    }
+
+    // React.useEffect(() => {
+    //     axios.get(baseURL).then((response => {
+    //       console.log(response.data)
+    //     //   setPost(response.data);
+    //     }))
+    //   }, []);
 
 
     const heatMapData = {
@@ -31,8 +49,9 @@ export default function AppGoogleHeatmap() {
     return (
         // Important! Always set the container height explicitly
         <div style={{ height: '100vh', width: '100%' }}>
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyASHOoCtcStfe12aW1DfibR4jr-cH6ZeMQ" }}
+            <button onClick={handleClick}>Help</button>
+            {/* <GoogleMapReact
+                bootstrapURLKeys={{ key: "AIzaSyASJBZug5wjbg1zVC1Tmwl8_EhQfT-3HlA" }}
                 defaultCenter={defaultProps.center}
                 defaultZoom={defaultProps.zoom}
                 heatmapLibrary
@@ -44,7 +63,7 @@ export default function AppGoogleHeatmap() {
                     lng={30.337844}
                     text="My Marker"
                 />
-            </GoogleMapReact>
+            </GoogleMapReact> */}
         </div>
     );
 }

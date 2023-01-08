@@ -74,7 +74,6 @@ export default function AppTruckState({ title }) {
 
   React.useEffect(() => {
     axios.get(baseURL).then((response => {
-      console.log(response.data)
       setPost(response.data);
     }))
   }, []);

@@ -66,11 +66,14 @@ mydb.connect()
 
 @app.route('/api/all_start_coordinates', methods=['GET'])
 def get_all_start_coordinates():
-    start_coordinates = []
-    for trip in Trips:
-        coordinates = utm.to_latlon(trip["easting"], trip["northing"], 1, "s")
-        start_coordinates.append({"lat": coordinates[0], "lon": coordinates[1]})
-    return start_coordinates
+    query = Trips\
+            .select(Trips.start_gpseasting) 
+    # start_coordinates = []
+    # for trip in Trips:
+    #     coordinates = utm.to_latlon(trip["easting"], trip["northing"], 1, "s")
+    #     start_coordinates.append({"lat": coordinates[0], "lon": coordinates[1]})
+    print(query)
+    return "test"
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count(truck_id):
