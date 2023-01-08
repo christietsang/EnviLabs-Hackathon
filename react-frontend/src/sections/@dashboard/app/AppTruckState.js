@@ -112,7 +112,7 @@ export default function AppTruckState({ title }) {
             endAngle={450}
             startAngle={90}
             labelPlacement={({ index }) => index
-            ? "parallel"
+            ? "vertical"
             : "vertical"
             }
           />
