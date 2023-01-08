@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, Response
+from flask import Flask
 from dotenv import load_dotenv
 import json
 from peewee import *
@@ -14,13 +14,14 @@ if os.getenv("TESTING") == "true":
     mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
 else:
     mydb = PostgresqlDatabase(
-        'my_app', 
+        'envilabs', 
         user='postgres', 
-        password='secret',
-        host='10.1.0.9', 
-        port=5432)
+        password='postgres',
+        host='localhost', 
+        port=15432)
 
-class Master(Model):
+class Operations(Model):
+    id = IntegerField()
     timestamp = DateTimeField()
     gpsnorthing = DoubleField()
     gpseasting = DoubleField()
@@ -38,12 +39,11 @@ class Master(Model):
         database = mydb
 
 mydb.connect()
-mydb.create_tables([Master])
-
-
+# mydb.create_tables([Master])
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count():
+    
     status_count = [
         {
             "empty": 2 
@@ -62,7 +62,6 @@ def get_truck_status_count():
 
 @app.route('/api/truck_ids', methods=['GET'])
 def get_truck_ids():
-
     return [0, 1, 2, 3]
     
 @app.route('/api')
