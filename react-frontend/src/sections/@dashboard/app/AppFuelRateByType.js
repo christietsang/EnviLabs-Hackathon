@@ -47,7 +47,7 @@ export default function AppFuelRateByType() {
           />
         <VictoryAxis
             dependentAxis
-            label="Avg Fuel Consumption"
+            label="Avg Fuel Consumption (l/hour)"
             style={sharedAxisStyles}
           />
       </VictoryChart>
