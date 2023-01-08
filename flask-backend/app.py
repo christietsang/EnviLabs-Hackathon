@@ -42,21 +42,16 @@ mydb.connect()
 # mydb.create_tables([Master])
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
-def get_truck_status_count():
-    
-    status_count = [
-        {
-            "empty": 2 
-        },
-        {
-            "hauling": 5 
-        },
-        {
-            "waiting":6
-        }
-    ]
+def get_truck_status_count(truck_id):
+    status_count = {}
+    for row in Operations.select().where(Operations.url == Operations.truck_id == truck_id):
+        status_count[row.status] = status_count.get(row.status, 0) + 1
 
-    return status_count
+    data = []
+    for key, value in status_count.items():
+        data.append({"status": key, "value": value})
+
+    return data
 
     
 
