@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
@@ -52,11 +52,6 @@ export default function AppCurrentSubject({ title, subheader, chartData, chartCo
   const [preductedFuelRate, setPredictedFuelRate] = useState();
 
   const handleButtonClick = () => {
-    setTruckId('');
-    setTruckTypeId('');
-    setPayload('');
-    setStatus('');
-    setPredictedFuelRate('');
     const data = {
       truck_id: tructId,
       truck_type_id: truckTypeId,
