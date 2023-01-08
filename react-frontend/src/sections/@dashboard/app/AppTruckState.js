@@ -77,7 +77,7 @@ export default function AppTruckState({ title }) {
   const createDropDown = () => {
     const numsList = [...Array(69).keys()]
     return numsList.map((item) => {
-      return <MenuItem value={item} key={item}>{item}</MenuItem>
+      return <MenuItem key={item} value={item}>{item}</MenuItem>
     })
   }
 
@@ -112,8 +112,8 @@ export default function AppTruckState({ title }) {
             endAngle={450}
             startAngle={90}
             labelPlacement={({ index }) => index
-              ? "vertical"
-              : "vertical"
+            ? "parallel"
+            : "vertical"
             }
           />
           <VictoryPie
