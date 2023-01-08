@@ -5,6 +5,7 @@ import json
 from peewee import *
 import datetime
 from playhouse.shortcuts import model_to_dict
+import utm
 
 load_dotenv()
 app = Flask(__name__)
@@ -38,8 +39,37 @@ class Operations(Model):
     class Meta:
         database = mydb
 
+class Trips(Model):
+    trip_id = IntegerField()
+    shovel_id = IntegerField()
+    dump_id = IntegerField()
+    truck_id = IntegerField()
+    truck_type_id = IntegerField()
+    avg_fuel = DoubleField()
+    payload = DoubleField()
+    start_time = DateTimeField()
+    end_time = DateTimeField()
+    start_gpsnorthing = DoubleField()
+    end_gpsnorthing = DoubleField()
+    start_gpseasting = DoubleField()
+    end_gpseasting = DoubleField()
+    start_gpselevation = DoubleField()
+    end_gpselevation = DoubleField()
+
+    class Meta:
+        database = mydb
+
+
 mydb.connect()
 # mydb.create_tables([Master])
+
+@app.route('/api/all_start_coordinates', methods=['GET'])
+def get_all_start_coordinates():
+    start_coordinates = []
+    for trip in Trips:
+        coordinates = utm.to_latlon(trip["easting"], trip["northing"], 1, "s")
+        start_coordinates.append({"lat": coordinates[0], "lon": coordinates[1]})
+    return start_coordinates
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count(truck_id):
