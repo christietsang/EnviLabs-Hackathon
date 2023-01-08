@@ -16,6 +16,10 @@ export default function AppGoogleHeatmap() {
     const [coordinates, setCoordinates] = useState([])
     const [, forceUpdate] = React.useState()
     const [truckID, setTruckID] = useState(0)
+    const [tripID, setTripId] = useState(0)
+    const [tripsCount, setTripsCount] = useState(0)
+
+    const TOTAL_TRUCKS = 69
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -58,6 +62,7 @@ export default function AppGoogleHeatmap() {
 
     const getTruckPathCoordinates = React.useCallback((truckId) => {
         axios.get(`${truckPathCoordinatesURL}/${truckId}`).then((response => {
+            setTripsCount(response.data.trips)
             setCoordinates([...response.data.coordinates])
         }))
     })
@@ -70,26 +75,26 @@ export default function AppGoogleHeatmap() {
 
 
 
-    const createDropDown = () => {
-        const numsList = [...Array(69).keys()]
+    const createDropDown = (itemsCount, firstElem) => {
+        const numsList = [...Array(itemsCount).keys()]
         return numsList.map((item) => {
-            if (item === 0) return <MenuItem value={item}>All</MenuItem>
+            if (item === 0) return <MenuItem value={item}>{firstElem}</MenuItem>
             return <MenuItem value={item}>{item}</MenuItem>
         })
     }
 
-    const createTripIdDropDown = () => {
-        const numsList = [...Array(2).keys()]
-        return numsList.map((item) => {
-            if (item === 0) return <MenuItem value={item}>All</MenuItem>
-            return <MenuItem value={item}>{item}</MenuItem>
-        })
-    }
 
-    const handleChange = (event) => {
+    const handleNewTruckSelected = (event) => {
         const newTruckId = event.target.value
         setTruckID(newTruckId)
-        getTruckPathCoordinates(newTruckId)
+        setTripId(0)
+        if (newTruckId) getTruckPathCoordinates(newTruckId)
+    }
+
+    const handleNewTripSelected = (event) => {
+        const newTripId = event.target.value
+        setTripId(newTripId)
+        getTripCoordinates(newTripId)
     }
 
 
@@ -104,31 +109,31 @@ export default function AppGoogleHeatmap() {
                         <Button variant="outlined" onClick={() => getLocationCoordinates("dump")}>Dumping Locations</Button>
                     </Stack>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-simple-select-label">Truck Paths</InputLabel>
+                        <InputLabel id="demo-simple-select-label">Truck ID</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
-                            label="Truck Activity"
+                            label="Truck ID"
                             id="demo-simple-select"
                             value={truckID}
                             defaultValue={0}
-                            onChange={handleChange}
+                            onChange={handleNewTruckSelected}
                             MenuProps={MenuProps}
                         >
-                            {createDropDown()}
+                            {createDropDown(TOTAL_TRUCKS, "None")}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-simple-select-label-2">Trips</InputLabel>
+                        <InputLabel id="demo-simple-select-label-2">Trip ID</InputLabel>
                         <Select
                             labelId="demo-simple-select-label-2"
-                            label="Truck Activity"
+                            label="Trip ID"
                             id="demo-simple-select"
-                            value={truckID}
+                            value={tripID}
                             defaultValue={0}
-                            onChange={handleChange}
+                            onChange={handleNewTripSelected}
                             MenuProps={MenuProps}
                         >
-                            {createTripIdDropDown()}
+                            {createDropDown(tripsCount, "All")}
                         </Select>
                     </FormControl>                    
                 </div>
