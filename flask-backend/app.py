@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request
 from dotenv import load_dotenv
 import json
 from peewee import *
@@ -17,8 +17,8 @@ if os.getenv("TESTING") == "true":
     mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
 else:
     mydb = PostgresqlDatabase(
-        'envilabs', 
-        user=os.getenv("USERNAME"), 
+        'envilabs',
+        user="postgres", 
         password=os.getenv("PASSWORD"),
         host=os.getenv("HOSTLINK"), 
         port=os.getenv("PORT"))
@@ -123,6 +123,25 @@ def get_fuel_rate_by_truck_type():
 @app.route('/api/truck_ids', methods=['GET'])
 def get_truck_ids():
     return [0, 1, 2, 3]
+
+
+def make_prediction(PAYLOAD, TRUCK_ID, TRUCK_TYPE_ID, STATUS):
+    status = {"STATUS_Dumping": 197.2934, "STATUS_Empty": 197.1431, "STATUS_Hauling": 200.2302,
+              "STATUS_NON_PRODUCTIVE": 195.6164, "STATUS_Queue At LU": 195.9913, "STATUS_Queuing at Dump": 197.7622,
+              "STATUS_Spot at LU": 196.4896, "STATUS_Truck Loading": 195.6117}
+    print(PAYLOAD, TRUCK_ID, TRUCK_TYPE_ID, STATUS)
+    result = (PAYLOAD * 0.0108) + (TRUCK_ID * 0.0177) + (TRUCK_TYPE_ID * 0.2083) + status.get("STATUS_"+STATUS)
+    return result
+
+@app.route('/api/predict_fuel_rate', methods=['POST'])
+def predict_fuel_rate():
+    data = request.get_json()
+    PAYLOAD = float(data["payload"])
+    TRUCK_ID = float(data["truck_id"])
+    TRUCK_TYPE_ID = float(data["truck_type_id"])
+    STATUS = data["status"]
+    return { "predicted_fuel_rate": make_prediction(PAYLOAD, TRUCK_ID, TRUCK_TYPE_ID, STATUS) }
+
     
 @app.route('/api')
 def api_home():
