@@ -83,11 +83,34 @@ def get_location_coordinates(location):
             coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
     return { "coordinates": coordinates }
 
-@app.route('/api/truck_path_coordinates/<int:truck_id>', methods=['GET'])
-def get_truck_path_coordinates(truck_id):
-    query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing, trip_id FROM trip_path_locations WHERE truck_id={truck_id};')
-    trip_count = 0
+# @app.route('/api/truck_path_coordinates/<int:truck_id>', methods=['GET'])
+# def get_truck_path_coordinates(truck_id):
+#     query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing, trip_id FROM trip_path_locations WHERE truck_id={truck_id};')
+#     trip_count = 0
+#     coordinates = []
+#     for q in query:
+#         easting = q[0]
+#         northing = q[1]
+#         trip_count = max(trip_count, q[2])
+#         if 100_000 < easting < 999_999 and 0 < northing < 10_000_000:
+#             this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
+#             coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
+#     return { "coordinates": coordinates, "trips": trip_count}
+
+
+@app.route('/api/truck_path_coordinates/<int:truck_id>/<int:trip_id>', methods=['GET'])
+def get_truck_path_coordinates_new(truck_id, trip_id):
+    # if truck_id == "0":
+    #     query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing FROM trip_path_locations;')
+    # else:
+    if trip_id == "0":
+        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing, trip_id FROM trip_path_locations WHERE truck_id={truck_id};')
+    else:
+        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing, trip_id FROM trip_path_locations WHERE truck_id={truck_id} AND trip_id={trip_id};')
+    
+    # print(query)
     coordinates = []
+    trip_count = 0
     for q in query:
         easting = q[0]
         northing = q[1]
@@ -96,26 +119,6 @@ def get_truck_path_coordinates(truck_id):
             this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
             coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
     return { "coordinates": coordinates, "trips": trip_count}
-
-
-# @app.route('/api/truck_path_coordinates/<int:truck_id>/<int:trip_id>', methods=['GET'])
-def get_truck_path_coordinates_new(truck_id, trip_id):
-    if truck_id == "0":
-        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing FROM trip_path_locations;')
-    else:
-        query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing FROM trip_path_locations WHERE truck_id={truck_id} AND trip_id={trip_id};')
-        if trip_id == "0":
-            query = mydb.execute_sql(f'SELECT gpseasting, gpsnorthing FROM trip_path_locations WHERE truck_id={truck_id};')
-    
-    print(query)
-    coordinates = []
-    for q in query:
-        easting = q[0]
-        northing = q[1]
-        if 100_000 < easting < 999_999 and 0 < northing < 10_000_000:
-            this_coordinates = utm.to_latlon(q[0], q[1], 1, "s")
-            coordinates.append({"lat": this_coordinates[0], "lng": this_coordinates[1]})
-    return { "coordinates": coordinates }
 
 @app.route('/api/truck_status_count/<int:truck_id>', methods=['GET'])
 def get_truck_status_count(truck_id):

@@ -61,14 +61,14 @@ export default function AppGoogleHeatmap() {
     })
 
     const getTruckPathCoordinates = React.useCallback((truckId) => {
-        axios.get(`${truckPathCoordinatesURL}/${truckId}`).then((response => {
+        axios.get(`${truckPathCoordinatesURL}/${truckId}/${tripID}`).then((response => {
             setTripsCount(response.data.trips)
             setCoordinates([...response.data.coordinates])
         }))
     })
 
-    const getTripCoordinates = React.useCallback((tripId) => {
-        axios.get(`${tripCoordinatesURL}/${tripId}`).then((response => {
+    const getTripCoordinates = React.useCallback((truckId, tripId) => {
+        axios.get(`${truckPathCoordinatesURL}/${truckId}/${tripId}`).then((response => {
             setCoordinates([...response.data.coordinates])
         }))
     })
@@ -94,7 +94,7 @@ export default function AppGoogleHeatmap() {
     const handleNewTripSelected = (event) => {
         const newTripId = event.target.value
         setTripId(newTripId)
-        getTripCoordinates(newTripId)
+        if (truckID) getTripCoordinates(truckID, newTripId)
     }
 
 
