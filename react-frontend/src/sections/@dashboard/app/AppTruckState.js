@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, CardHeader } from '@mui/material';
-import { VictoryPie } from 'victory';
+import { VictoryPie, VictoryTheme, VictoryLabel } from 'victory';
 
 
 // ----------------------------------------------------------------------
@@ -79,6 +79,17 @@ export default function AppTruckState({ title }) {
       <StyledChartWrapper dir="ltr">
         <VictoryPie
           data={APIData}
+          innerRadius={60}
+          labelRadius={130}
+          labels={({ datum }) => `${datum.y}%`}
+          theme={VictoryTheme.material}
+        />
+        <VictoryPie
+          data={APIData}
+          innerRadius={60}
+          labelRadius={120}
+          labels={({ datum }) => `${datum.y}%`}
+          theme={VictoryTheme.material}
         />
       </StyledChartWrapper>
     </Card>
