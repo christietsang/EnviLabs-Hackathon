@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, CardHeader } from '@mui/material';
-import { VictoryPie, VictoryTheme, VictoryLabel } from 'victory';
+import { VictoryPie } from 'victory';
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
+import { Card, CardHeader, FormControl, Select, InputLabel, MenuItem } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -33,63 +33,59 @@ AppTruckState.propTypes = {
   title: PropTypes.string,
 };
 
-const baseURL = "http://127.0.0.1:5000/api/truck_status_count/1"
-
-
-const jsonObject = {
-  "data":[
-    {
-      'state': "empty",
-      'value': 30,
-    },
-    {
-      'state': "queue_at_LU",
-      'value': 30,
-    },
-    {
-      'state': "spot_at_LU",
-      'value': 10,
-    },
-    {
-      'state': "truck_loading",
-      'value': 10,
-    },
-    {
-      'state': "non_productive",
-      'value': 5,
-    },
-    {
-      'state': "queuing_at_dump",
-      'value': 5,
-    },
-    {
-      'state': "dumping",
-      'value': 10,
-    },
-]};
 
 export default function AppTruckState({ title }) {
 
+
   const [post, setPost] = useState(null);
+  const [truckID, setTruckID] = useState(1)
+
+  const baseURL = `http://127.0.0.1:5000/api/truck_status_count/${truckID}`
+
+
+  const handleChange = (event) => {
+    setTruckID(event.target.value);
+  }
 
   React.useEffect(() => {
+    console.log(baseURL)
     axios.get(baseURL).then((response => {
       setPost(response.data);
     }))
-  }, []);
-  
+  }, [truckID]);
+
   if (!post) return null;
 
   function convertJsonObject(object) {
-    return object.data.map(item => ({ x: item.status, y: Number(item.value.toFixed(1))}));
+    return object.data.map(item => ({ x: item.status, y: Number(item.value.toFixed(1)) }));
   }
 
   const APIData = convertJsonObject(post)
 
+  const createDropDown = () => {
+    const numsList = [...Array(69).keys()]
+    return numsList.map((item) => {
+      return <MenuItem value={item}>{item}</MenuItem>
+    })
+  }
+
   return (
     <Card>
-      <CardHeader title={title}/>
+      <CardHeader title={title} />
       <StyledChartWrapper dir="ltr">
+        <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+          <InputLabel id="demo-simple-select-label">Truck ID</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={truckID}
+            label="Age"
+            defaultValue={0}
+            onChange={handleChange}
+          >
+            {createDropDown()}
+          </Select>
+        </FormControl>
         <svg viewBox="-50 -40 450 450">
           <VictoryPie
             data={APIData}
@@ -100,8 +96,8 @@ export default function AppTruckState({ title }) {
             origin={{ x: 150, y: 160 }}
             sortOrder="ascending"
             labelPlacement={({ index }) => index
-            ? "vertical"
-            : "vertical"
+              ? "vertical"
+              : "vertical"
             }
           />
           <VictoryPie
@@ -115,7 +111,6 @@ export default function AppTruckState({ title }) {
             sortOrder="ascending"
           />
         </svg>
-
       </StyledChartWrapper>
     </Card>
   );

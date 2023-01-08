@@ -18,10 +18,10 @@ if os.getenv("TESTING") == "true":
 else:
     mydb = PostgresqlDatabase(
         'envilabs', 
-        user='postgres', 
-        password='postgres',
-        host='localhost', 
-        port=15432)
+        user=os.getenv("USERNAME"), 
+        password=os.getenv("PASSWORD"),
+        host=os.getenv("HOSTLINK"), 
+        port=os.getenv("PORT"))
 
 class Operations(Model):
     id = IntegerField()
