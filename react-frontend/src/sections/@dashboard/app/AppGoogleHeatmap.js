@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import GoogleMapReact from 'google-map-react';
 import axios from 'axios'
-import { Box, Button, Card, CardHeader, FormControl, Select, InputLabel, MenuItem } from '@mui/material';
+import { Box, Button, Card, CardHeader, FormControl, Select, InputLabel, MenuItem, Stack} from '@mui/material';
 
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
@@ -16,6 +16,16 @@ export default function AppGoogleHeatmap() {
     const [coordinates, setCoordinates] = useState([])
     const [, forceUpdate] = React.useState()
     const [truckID, setTruckID] = useState(0)
+
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250
+        }}  
+    };
 
     const defaultProps = {
         center: {
@@ -81,8 +91,10 @@ export default function AppGoogleHeatmap() {
             <CardHeader title={"Activity Heat Map"} />
             <div style={{ height: '100vh', width: '100%', }}>
                 <div style={{ display: "flex", justifyContent: "left", alignItems: "left" }}>
-                    <Button variant="outlined" onClick={() => getLocationCoordinates("shovel")}>Loading Locations</Button>
-                    <Button variant="outlined" onClick={() => getLocationCoordinates("dump")}>Dumping Locations</Button>
+                    <Stack sx={{p: 1}}spacing={1} direction="row">
+                        <Button variant="outlined" onClick={() => getLocationCoordinates("shovel")}>Loading Locations</Button>
+                        <Button variant="outlined" onClick={() => getLocationCoordinates("dump")}>Dumping Locations</Button>
+                    </Stack>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
                         <InputLabel id="demo-simple-select-label">Truck Paths</InputLabel>
                         <Select
@@ -92,6 +104,7 @@ export default function AppGoogleHeatmap() {
                             value={truckID}
                             defaultValue={0}
                             onChange={handleChange}
+                            MenuProps={MenuProps}
                         >
                             {createDropDown()}
                         </Select>
