@@ -65,7 +65,7 @@ export default function AppTruckState({ title }) {
   const createDropDown = () => {
     const numsList = [...Array(69).keys()]
     return numsList.map((item) => {
-      return <MenuItem value={item}>{item}</MenuItem>
+      return <MenuItem key={item} value={item}>{item}</MenuItem>
     })
   }
 

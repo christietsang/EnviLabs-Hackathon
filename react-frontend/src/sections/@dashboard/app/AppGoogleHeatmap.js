@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import GoogleMapReact from 'google-map-react';
 import axios from 'axios'
-import { Box, Button, Card, CardHeader, FormControl, Select, InputLabel, MenuItem, Stack} from '@mui/material';
+import { Box, Button, Card, CardHeader, FormControl, Select, InputLabel, MenuItem, Stack } from '@mui/material';
 
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
@@ -17,7 +17,7 @@ export default function AppGoogleHeatmap() {
     const [, forceUpdate] = React.useState()
     const [truckID, setTruckID] = useState(0)
     const [tripID, setTripId] = useState(0)
-    const [tripsCount, setTripsCount] = useState(0)
+    const [tripsCount, setTripsCount] = useState(1)
 
     const TOTAL_TRUCKS = 69
 
@@ -26,9 +26,10 @@ export default function AppGoogleHeatmap() {
     const MenuProps = {
         PaperProps: {
             style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250
-        }}  
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250
+            }
+        }
     };
 
     const defaultProps = {
@@ -62,7 +63,7 @@ export default function AppGoogleHeatmap() {
 
     const getTruckPathCoordinates = React.useCallback((truckId) => {
         axios.get(`${truckPathCoordinatesURL}/${truckId}/${tripID}`).then((response => {
-            setTripsCount(response.data.trips)
+            if (response.data.trips) setTripsCount(response.data.trips)
             setCoordinates([...response.data.coordinates])
         }))
     })
@@ -75,11 +76,11 @@ export default function AppGoogleHeatmap() {
 
 
 
-    const createDropDown = (itemsCount, firstElem) => {
+    const createDropDown = (itemsCount, firstElem, key) => {
         const numsList = [...Array(itemsCount).keys()]
         return numsList.map((item) => {
-            if (item === 0) return <MenuItem value={item}>{firstElem}</MenuItem>
-            return <MenuItem value={item}>{item}</MenuItem>
+            if (item === 0) return <MenuItem key={item} value={item}>{firstElem}</MenuItem>
+            return <MenuItem key={item} value={item}>{item}</MenuItem>
         })
     }
 
@@ -104,14 +105,14 @@ export default function AppGoogleHeatmap() {
             <CardHeader title={"Activity Heat Map"} />
             <div style={{ height: '100vh', width: '100%', }}>
                 <div style={{ display: "flex", justifyContent: "left", alignItems: "left" }}>
-                    <Stack sx={{p: 1}}spacing={1} direction="row">
+                    <Stack sx={{ p: 1 }} spacing={1} direction="row">
                         <Button variant="outlined" onClick={() => getLocationCoordinates("shovel")}>Loading Locations</Button>
                         <Button variant="outlined" onClick={() => getLocationCoordinates("dump")}>Dumping Locations</Button>
                     </Stack>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-simple-select-label">Truck ID</InputLabel>
+                        <InputLabel id="demo-simple-select-label-1">Truck ID</InputLabel>
                         <Select
-                            labelId="demo-simple-select-label"
+                            labelId="demo-simple-select-label-1"
                             label="Truck ID"
                             id="demo-simple-select"
                             value={truckID}
@@ -119,7 +120,7 @@ export default function AppGoogleHeatmap() {
                             onChange={handleNewTruckSelected}
                             MenuProps={MenuProps}
                         >
-                            {createDropDown(TOTAL_TRUCKS, "None")}
+                            {createDropDown(TOTAL_TRUCKS, "None", "truck")}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -133,9 +134,9 @@ export default function AppGoogleHeatmap() {
                             onChange={handleNewTripSelected}
                             MenuProps={MenuProps}
                         >
-                            {createDropDown(tripsCount, "All")}
+                            {createDropDown(tripsCount, "All", "trip")}
                         </Select>
-                    </FormControl>                    
+                    </FormControl>
                 </div>
 
                 {/* <button onClick={() => console.log(heatMapData)}>Test</button> */}
